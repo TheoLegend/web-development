@@ -1,0 +1,54 @@
+   body {
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: black;
+    color: aqua;
+   }
+
+   h1 {
+    color: rgb(11, 84, 240);
+   }
+
+   a {
+    color: rgba(0, 0, 0, 0.196);
+    text-decoration: none;
+   }
+
+   a:hover {
+    color: rgb(0, 89, 255);
+   }
+
+   ul > li {
+    font-weight: bold;
+   }
+
+   h1 + p {
+    background-color: black;
+    padding: 10px;
+    border-radius: 5px;
+   }
+
+   ul li:hover {
+color: rgba(0, 60, 255, 0.705);
+   }
+
+   ul li:nth-child(3) {
+   background-color: black; 
+   }
+
+   p:not( :first-of-type) {
+    text-decoration: underline;
+   }
+
+   ul li ::before {
+    content: "🚀 ";
+   }
+
+   a::after {
+     content: "🌌";
+   }
+
+   P::first-letter ~{
+    font-size:200% ;
+    color: rgb(242, 5, 5);
+   }
+   
