@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pagination with Spinner, Cards, Navbar</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f2f2f2;
+    }
+
+    /* Navigation Bar */
+    .navbar {
+      background-color: #333;
+      overflow: hidden;
+      padding: 10px 20px;
+    }
+
+    .navbar a {
+      color: white;
+      padding: 10px 16px;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .navbar a:hover {
+      background-color: #575757;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 30px auto;
+      padding: 20px;
+      background: white;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    /* Cards */
+    .card {
+      background-color: #ffffff;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      margin: 10px 0;
+      padding: 15px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    /* Pagination */
+    .pagination {
+      text-align: center;
+      margin: 20px 0;
+    }
+
+    .pagination a {
+      color: black;
+      padding: 8px 14px;
+      text-decoration: none;
+      margin: 0 5px;
+      border: 1px solid #ccc;
+    }
+
+    .pagination a.active {
+      background-color: #2196F3;
+      color: white;
+      border: 1px solid #2196F3;
+    }
+
+    .pagination a:hover {
+      background-color: #ddd;
+    }
+
+    /* Spinner */
+    .spinner {
+      text-align: center;
+      margin: 20px;
+      display: none;
+    }
+
+    .spinner div {
+      width: 32px;
+      height: 32px;
+      border: 4px solid #ccc;
+      border-top: 4px solid #2196F3;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: auto;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Navigation Bar -->
+<div class="navbar">
+  <a href="#">Home</a>
+  <a href="#">Blog</a>
+  <a href="#">Projects</a>
+  <a href="#">Contact</a>
+</div>
+
+<!-- Container -->
+<div class="container">
+  <h2>Numbered Pagination with Cards and Spinner</h2>
+
+  <!-- Spinner -->
+  <div class="spinner" id="spinner"><div></div></div>
+
+  <!-- Content Area -->
+  <div id="card-container"></div>
+
+  <!-- Pagination -->
+  <div class="pagination" id="pagination"></div>
+</div>
+
+<script>
+  const itemsPerPage = 4;
+  const totalItems = 20;
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
+  const data = Array.from({ length: totalItems }, (_, i) => `Card Item #${i + 1}`);
+  const cardContainer = document.getElementById('card-container');
+  const pagination = document.getElementById('pagination');
+  const spinner = document.getElementById('spinner');
+
+  function renderPage(page) {
+    cardContainer.innerHTML = '';
+    spinner.style.display = 'block';
+
+    setTimeout(() => {
+      spinner.style.display = 'none';
+      const start = (page - 1) * itemsPerPage;
+      const end = start + itemsPerPage;
+      const pageItems = data.slice(start, end);
+
+      pageItems.forEach(item => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.textContent = item;
+        cardContainer.appendChild(card);
+      });
+    }, 600);
+  }
+
+  function setupPagination() {
+    for (let i = 1; i <= totalPages; i++) {
+      const a = document.createElement('a');
+      a.href = "#";
+      a.textContent = i;
+      if (i === 1) a.classList.add('active');
+
+      a.addEventListener('click', (e) => {
+        e.preventDefault();
+        document.querySelectorAll('.pagination a').forEach(el => el.classList.remove('active'));
+        a.classList.add('active');
+        renderPage(i);
+      });
+
+      pagination.appendChild(a);
+    }
+  }
+
+  // Initialize
+  setupPagination();
+  renderPage(1);
+</script>
+
+</body>
+</html>
