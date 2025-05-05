@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SG Pal - Pixel AI Buddy</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #1e1e2f;
+      color: #fff;
+      text-align: center;
+      padding: 50px;
+    }
+    h1 {
+      font-size: 2.5rem;
+      color: #00ffff;
+    }
+    .console {
+      background-color: #2e2e42;
+      border: 2px solid #00ffff;
+      border-radius: 10px;
+      padding: 20px;
+      margin-top: 20px;
+      max-width: 500px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    input, button {
+      padding: 10px;
+      font-size: 1rem;
+      margin: 10px 5px;
+      border-radius: 5px;
+    }
+    button {
+      background-color: #00ffff;
+      color: #000;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #00cccc;
+    }
+    #output {
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🤖 SG Pal - Your Pixel AI Buddy</h1>
+
+  <div class="console">
+    <p>Enter your info to activate your SG Pal Upgrades:</p>
+    <input type="text" id="yourName" placeholder="Your Name">
+    <input type="text" id="favGame" placeholder="Favorite Roblox Game">
+    <br>
+    <button onclick="saveUpgrades()">Save Upgrades</button>
+    <button onclick="activateVoice()">Activate Cut Voice 🎤</button>
+
+    <div id="output"></div>
+  </div>
+
+  <script>
+    // Load memory
+    window.onload = function() {
+      const name = localStorage.getItem("SGname");
+      const game = localStorage.getItem("SGgame");
+      if (name && game) {
+        document.getElementById("output").innerHTML = `
+          <p>🌟 Welcome back, <strong>${name}</strong>!</p>
+          <p>🎮 Your favorite Roblox game is <strong>${game}</strong></p>
+          <p>🧠 Memory and Cut Voice upgrades are online!</p>
+        `;
+      }
+    }
+
+    // Save to memory
+    function saveUpgrades() {
+      const name = document.getElementById("yourName").value;
+      const game = document.getElementById("favGame").value;
+      localStorage.setItem("SGname", name);
+      localStorage.setItem("SGgame", game);
+      document.getElementById("output").innerHTML = `
+        <p>🌟 Welcome, <strong>${name}</strong>!</p>
+        <p>🎮 You love <strong>${game}</strong></p>
+        <p>✅ Upgrades saved. SG Pal is fully online.</p>
+      `;
+    }
+
+    // Activate "cut voice"
+    function activateVoice() {
+      const message = new SpeechSynthesisUtterance("SG Pal online. Memory upgraded. Cut voice activated.");
+      message.pitch = 1.4;
+      message.rate = 1;
+      message.volume = 1;
+      speechSynthesis.speak(message);
+    }
+  </script>
+
+</body>
+</html>
