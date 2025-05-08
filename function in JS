@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+
+<html>
+
+<body>
+
+<p>A function can access variables defined inside the function:</p>
+
+<button type="button" onclick="myFunction()">Click Me!</button>
+
+<p id="demo"></p>
+
+<p id="demo1"></p>
+
+<script>
+
+function myFunction() {
+
+var a = 4;
+
+document.getElementById("demo").innerHTML = a * a;
+
+document.getElementById("demo1").innerHTML = a;
+
+}
+
+
+</script>
+
+
+</body>
+
+</html>
