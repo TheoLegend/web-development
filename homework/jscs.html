@@ -1,0 +1,66 @@
+ <!DOCTYPE html>
+<html>
+<head>
+  <title>Student Greeting</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    .message {
+      margin: 10px 0;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Student Greetings</h1>
+  <div id="output"></div>
+
+  <script>
+    class Student {
+      constructor(name, birthYear) {
+        this.name = name;
+        this.birthYear = birthYear;
+      }
+
+      sayHi() {
+        return `${this.name} says: Hi!`;
+      }
+
+      sayHello() {
+        return `${this.name} says: Hello!`;
+      }
+
+      sayWelcome() {
+        return `${this.name} says: Welcome!`;
+      }
+
+      static createTina() {
+        return new Student("Tina", 2014);
+      }
+    }
+
+    // Create Tina using the static method
+    const tina = Student.createTina();
+
+    // Get the output div
+    const outputDiv = document.getElementById("output");
+
+    // Display Tina's greetings
+    const messages = [
+      tina.sayHi(),
+      tina.sayHello(),
+      tina.sayWelcome()
+    ];
+
+    messages.forEach(msg => {
+      const p = document.createElement("p");
+      p.className = "message";
+      p.textContent = msg;
+      outputDiv.appendChild(p);
+    });
+  </script>
+
+</body>
+</html>
