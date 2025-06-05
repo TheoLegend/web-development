@@ -1,18 +1,28 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html>
+<head>
+  <title>Error Handling Example</title>
+</head>
 <body>
 
-<p>This example demo of Error finding in he to html JS.</p>
+<h2>Click the button to trigger error handling</h2>
 
-<p id="error_message"></p>
+<button onclick="handleCalculation()">Calculate</button>
+
+<p id="output"></p>
+<p id="error_message" style="color: red;"></p>
 
 <script>
-  let b = 10;
-  try {
-    let result = a + b; // 'a' is not defined
-    console.log("Result:", result);
-  } catch (err) {
-    document.getElementById("error_message").innerHTML = err.message;
+  function handleCalculation() {
+    try {
+      // b is defined, but a is not — this will throw a ReferenceError
+      let b = 5;
+      let result = a + b; // 'a' is not defined
+      document.getElementById("output").innerHTML = "Result: " + result;
+    } catch (err) {
+      // Display the error message in the "error_message" paragraph
+      document.getElementById("error_message").innerHTML = err.message;
+    }
   }
 </script>
 
