@@ -1,0 +1,20 @@
+ <!DOCTYPE html>
+<html>
+<body>
+
+<p>This example demo of Error finding in he to html JS.</p>
+
+<p id="error_message"></p>
+
+<script>
+  let b = 10;
+  try {
+    let result = a + b; // 'a' is not defined
+    console.log("Result:", result);
+  } catch (err) {
+    document.getElementById("error_message").innerHTML = err.message;
+  }
+</script>
+
+</body>
+</html>

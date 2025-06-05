@@ -1,71 +1,77 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <title>Sort Numbers</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      padding: 20px;
-    }
-    button {
-      margin-right: 10px;
-      padding: 5px 10px;
-      cursor: pointer;
-    }
-    ul {
-      list-style-type: none;
-      padding-left: 0;
-    }
-    li {
-      margin: 5px 0;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <title>Sort Numbers</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+
+        button {
+            margin-right: 10px;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+
+        ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+
+        li {
+            margin: 5px 0;
+        }
+    </style>
 </head>
+
 <body>
 
-  <h2>Sorted Multiplied Numbers</h2>
+    <h2>Sorted Multiplied Numbers</h2>
 
-  <button onclick="sortAscending()">Sort Ascending</button>
-  <button onclick="sortDescending()">Sort Descending</button>
+    <button onclick="sortAscending()">Sort Ascending</button>
+    <button onclick="sortDescending()">Sort Descending</button>
 
-  <ul id="outputList"></ul>
+    <ul id="outputList"></ul>
 
-  <script>
-    // Original array
-    const originalNumbers = [470, 125, 95, 60];
+    <script>
+        // Original array
+        const originalNumbers = [470, 125, 95, 60];
 
-    // Multiply each number by 10 using map
-    const multipliedNumbers = originalNumbers.map(num => num * 10);
+        // Multiply each number by 10 using map
+        const multipliedNumbers = originalNumbers.map(num => num * 10);
 
-    // Reference to the HTML list
-    const outputList = document.getElementById('outputList');
+        // Reference to the HTML list
+        const outputList = document.getElementById('outputList');
 
-    // Function to display numbers in the list
-    function displayNumbers(arr) {
-      outputList.innerHTML = '';
-      arr.forEach(num => {
-        const li = document.createElement('li');
-        li.textContent = num;
-        outputList.appendChild(li);
-      });
-    }
+        // Function to display numbers in the list
+        function displayNumbers(arr) {
+            outputList.innerHTML = '';
+            arr.forEach(num => {
+                const li = document.createElement('li');
+                li.textContent = num;
+                outputList.appendChild(li);
+            });
+        }
 
-    // Sort ascending
-    function sortAscending() {
-      const sorted = [...multipliedNumbers].sort((a, b) => a - b);
-      displayNumbers(sorted);
-    }
+        // Sort ascending
+        function sortAscending() {
+            const sorted = [...multipliedNumbers].sort((a, b) => a - b);
+            displayNumbers(sorted);
+        }
 
-    // Sort descending
-    function sortDescending() {
-      const sorted = [...multipliedNumbers].sort((a, b) => b - a);
-      displayNumbers(sorted);
-    }
+        // Sort descending
+        function sortDescending() {
+            const sorted = [...multipliedNumbers].sort((a, b) => b - a);
+            displayNumbers(sorted);
+        }
 
-    // Initial display
-    displayNumbers(multipliedNumbers);
-  </script>
+        // Initial display
+        displayNumbers(multipliedNumbers);
+    </script>
 
 </body>
+
 </html>
