@@ -1,0 +1,44 @@
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Async Multiply to 100</title>
+</head>
+<body>
+  <h2>Multiply Two Numbers (Async/Await)</h2>
+  <input id="num1" type="number" placeholder="Enter first number" />
+  <input id="num2" type="number" placeholder="Enter second number" />
+  <button id="multiplyBtn">Multiply</button>
+  <p id="result"></p>
+
+  <script>
+    async function multiplyAsync(a, b) {
+      // Simulate async operation with delay
+      await new Promise(resolve => setTimeout(resolve, 500));
+      return a * b;
+    }
+
+    document.getElementById('multiplyBtn').addEventListener('click', async () => {
+      const num1 = Number(document.getElementById('num1').value);
+      const num2 = Number(document.getElementById('num2').value);
+      const resultEl = document.getElementById('result');
+
+      if (isNaN(num1) || isNaN(num2)) {
+        resultEl.textContent = "Please enter valid numbers!";
+        return;
+      }
+
+      try {
+        const product = await multiplyAsync(num1, num2);
+        if (product === 100) {
+          resultEl.textContent = `Success! ${num1} × ${num2} = 100`;
+        } else {
+          resultEl.textContent = `Result: ${num1} × ${num2} = ${product} (Not 100)`;
+        }
+      } catch (e) {
+        resultEl.textContent = "Error occurred during multiplication.";
+      }
+    });
+  </script>
+</body>
+</html>

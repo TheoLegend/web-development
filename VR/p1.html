@@ -1,0 +1,160 @@
+ <!DOCTYPE html>
+<html>
+  <head>
+    <title>Pixel Buddy: FULL POWER</title>
+    <script src="https://aframe.io/releases/1.4.1/aframe.min.js"></script>
+    <script src="https://cdn.rawgit.com/ngokevin/aframe-extras/v6.1.1/dist/aframe-extras.min.js"></script>
+  </head>
+  <body style="margin: 0; overflow: hidden">
+    
+    <!-- 🧠 HUD -->
+    <div style="position: absolute; top: 10px; left: 10px; font-family: monospace; background: rgba(255,255,255,0.9); padding: 10px; border-radius: 8px; z-index: 1;">
+      <strong>Pixel Buddy</strong><br>
+      🎯 Score: <span id="score">0</span> / 10<br>
+      ❤️ Lives: <span id="lives">3</span><br>
+      ⏱️ Time: <span id="timer">60</span>s
+    </div>
+
+    <!-- 🪧 Game Over UI -->
+    <div id="message" style="display:none; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); font-size:30px; font-family: monospace; background:white; padding:25px; border-radius:12px; text-align:center; z-index:2;">
+      <span id="resultText"></span><br><br>
+      <button onclick="location.reload()">🔁 Restart</button>
+    </div>
+
+    <!-- 🎮 Main VR Scene -->
+    <a-scene shadow="type: pcfsoft" background="color: #E0F7FA">
+      
+      <!-- 🌍 World -->
+      <a-plane rotation="-90 0 0" width="50" height="50" color="#B2FF59" shadow></a-plane>
+      <a-sky color="#87CEFA"></a-sky>
+
+      <!-- ☀️ Light -->
+      <a-entity light="type: directional; intensity: 0.8;" position="1 4 2" shadow></a-entity>
+      <a-entity light="type: ambient; intensity: 0.4"></a-entity>
+
+      <!-- 🕹️ Player Camera Rig -->
+      <a-entity id="player" position="0 1.6 0">
+        <a-camera look-controls wasd-controls>
+          <!-- Crosshair -->
+          <a-cursor color="#000" fuse="true"></a-cursor>
+        </a-camera>
+      </a-entity>
+
+      <!-- 🎯 Pixel Buddies & Enemies will spawn dynamically here -->
+      <a-entity id="entities-root"></a-entity>
+
+      <!-- 🎇 Sparkle FX -->
+      <a-entity id="sparkle" particle-system="preset: dust; particleCount: 100" visible="false"></a-entity>
+
+    </a-scene>
+
+    <!-- ⚙️ Game Logic Manager -->
+    <script>
+      let score = 0;
+      let lives = 3;
+      let timeLeft = 60;
+
+      const scoreEl = document.getElementById("score");
+      const livesEl = document.getElementById("lives");
+      const timerEl = document.getElementById("timer");
+
+      // ⏱️ Countdown Timer
+      const countdown = setInterval(() => {
+        timeLeft--;
+        timerEl.textContent = timeLeft;
+        if (timeLeft <= 0) endGame(false, "⏳ Time's up!");
+      }, 1000);
+
+      // 🧠 End Game
+      function endGame(won, message) {
+        clearInterval(countdown);
+        document.getElementById("message").style.display = "block";
+        document.getElementById("resultText").innerText = won ? "🏆 You Win!" : message;
+      }
+
+      // ✅ Score Tracker
+      function addScore() {
+        score++;
+        scoreEl.textContent = score;
+        if (score >= 10) endGame(true);
+      }
+
+      // ❌ Lives Tracker
+      function loseLife() {
+        lives--;
+        livesEl.textContent = lives;
+        if (lives <= 0) endGame(false, "💥 You were defeated!");
+      }
+        
+      <script>
+  const root = document.getElementById("entities-root");
+  const sparkle = document.getElementById("sparkle");
+  const camera = document.getElementById("player");
+
+  const buddyColors = ["#FFD700", "#00CED1", "#FF69B4", "#8A2BE2", "#00FF7F", "#FF4500", "#1E90FF", "#32CD32", "#FF1493", "#DAA520"];
+
+  function createBuddy(index) {
+    const buddy = document.createElement("a-box");
+    buddy.setAttribute("class", "buddy");
+    buddy.setAttribute("depth", "0.8");
+    buddy.setAttribute("height", "0.8");
+    buddy.setAttribute("width", "0.8");
+
+    const x = Math.random() * 40 - 20;
+    const z = Math.random() * 40 - 20;
+    buddy.setAttribute("position", `${x} 1 ${z}`);
+    buddy.setAttribute("color", buddyColors[index % buddyColors.length]);
+    buddy.setAttribute("animation", "property: rotation; to: 0 360 0; loop: true; dur: 4000");
+    buddy.setAttribute("glow", "true");
+
+    root.appendChild(buddy);
+  }
+
+  // Spawn 10 Pixel Buddies
+  for (let i = 0; i < 10; i++) {
+    createBuddy(i);
+  }
+
+  // Collect with 'E' key
+  document.addEventListener("keydown", (e) => {
+    if (e.key.toLowerCase() === "e") {
+      document.querySelectorAll(".buddy").forEach(buddy => {
+        if (buddy.getAttribute("visible") !== false) {
+          const dist = camera.object3D.position.distanceTo(buddy.object3D.position);
+          if (dist < 2) {
+            collectBuddy(buddy);
+          }
+        }
+      });
+    }
+  });
+
+  // OR click (VR-friendly)
+  AFRAME.registerComponent("click-to-collect", {
+    init: function () {
+      this.el.addEventListener("click", () => {
+        collectBuddy(this.el);
+      });
+    }
+  });
+
+  // Collection logic
+  function collectBuddy(buddy) {
+    buddy.setAttribute("visible", false);
+    addScore();
+
+    // Sparkle effect
+    sparkle.setAttribute("position", buddy.getAttribute("position"));
+    sparkle.setAttribute("visible", true);
+    setTimeout(() => sparkle.setAttribute("visible", false), 500);
+  }
+
+  // Attach click behavior to new buddies
+  setTimeout(() => {
+    document.querySelectorAll(".buddy").forEach(b => b.setAttribute("click-to-collect", ""));
+  }, 500);
+</script>
+
+    </script>
+  </body>
+</html>

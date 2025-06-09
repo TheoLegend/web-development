@@ -1,0 +1,129 @@
+ <!DOCTYPE html>
+<html>
+<head>
+  <title>Pixel Buddy: FULL POWER</title>
+  <script src="https://aframe.io/releases/1.4.1/aframe.min.js"></script>
+  <script src="https://cdn.rawgit.com/ngokevin/aframe-extras/v6.1.1/dist/aframe-extras.min.js"></script>
+</head>
+<body style="margin:0;overflow:hidden;">
+
+  <!-- HUD -->
+  <div style="position:absolute;top:10px;left:10px;font-family: monospace; background: rgba(255,255,255,0.9); padding:10px; border-radius:8px; z-index:10;">
+    <strong>Pixel Buddy</strong><br>
+    🎯 Score: <span id="score">0</span> / 10<br>
+    ❤️ Lives: <span id="lives">3</span><br>
+    ⏱️ Time: <span id="timer">60</span>s<br>
+    ⚡ Power-Up: <span id="powerup">None</span>
+  </div>
+
+  <!-- Game Over UI -->
+  <div id="message" style="display:none; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); font-size:30px; font-family: monospace; background:white; padding:25px; border-radius:12px; text-align:center; z-index:20;">
+    <span id="resultText"></span><br><br>
+    <button onclick="location.reload()">🔁 Restart</button>
+  </div>
+
+  <!-- Audio -->
+  <audio id="pickupSound" src="https://actions.google.com/sounds/v1/cartoon/pop.ogg" preload="auto"></audio>
+  <audio id="hurtSound" src="https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg" preload="auto"></audio>
+  <audio id="winSound" src="https://actions.google.com/sounds/v1/cartoon/wood_plank_flicks.ogg" preload="auto"></audio>
+  <audio id="loseSound" src="https://actions.google.com/sounds/v1/cartoon/cartoon_boing.ogg" preload="auto"></audio>
+
+  <!-- A-Frame Scene -->
+  <a-scene shadow="type: pcfsoft" background="color: #87CEFA" embedded>
+    <a-plane rotation="-90 0 0" width="50" height="50" color="#B2FF59" shadow></a-plane>
+    <a-sky id="sky" color="#87CEFA"></a-sky>
+    <a-entity id="sunLight" light="type: directional; intensity: 0.8; castShadow: true;" position="1 4 2" shadow></a-entity>
+    <a-entity light="type: ambient; intensity: 0.4"></a-entity>
+    <a-entity id="player" position="0 1.6 0">
+      <a-camera look-controls wasd-controls>
+        <a-cursor color="#000" fuse="true"></a-cursor>
+      </a-camera>
+    </a-entity>
+    <a-entity id="entities-root"></a-entity>
+    <a-entity id="sparkle" particle-system="preset: dust; particleCount: 100" visible="false"></a-entity>
+  </a-scene>
+
+  <script>
+    let score = 0;
+    let lives = 3;
+    let timeLeft = 60;
+    let powerUpActive = false;
+    let powerUpTimeout = null;
+    let speedMultiplier = 1;
+
+    const scoreEl = document.getElementById("score");
+    const livesEl = document.getElementById("lives");
+    const timerEl = document.getElementById("timer");
+    const powerupEl = document.getElementById("powerup");
+    const messageEl = document.getElementById("message");
+    const resultTextEl = document.getElementById("resultText");
+
+    const pickupSound = document.getElementById("pickupSound");
+    const hurtSound = document.getElementById("hurtSound");
+    const winSound = document.getElementById("winSound");
+    const loseSound = document.getElementById("loseSound");
+
+    const root = document.getElementById("entities-root");
+    const sparkle = document.getElementById("sparkle");
+    const camera = document.getElementById("player");
+    const sky = document.getElementById("sky");
+    const sunLight = document.getElementById("sunLight");
+
+    const buddyColors = ["#FFD700", "#00CED1", "#FF69B4", "#8A2BE2
+      checkCollisionWithPlayer() {
+        let pos = this.el.getAttribute('position');
+        let playerPos = camera.object3D.position;
+        let dx = pos.x - playerPos.x;
+        let dz = pos.z - playerPos.z;
+        let dist = Math.sqrt(dx*dx + dz*dz);
+        if(dist < 1) {
+          loseLife();
+          // Knock player back a bit
+          playerPos.x -= dx * 0.5;
+          playerPos.z -= dz * 0.5;
+          camera.setAttribute('position', playerPos);
+        }
+      }
+      destroy() {
+        clearInterval(this.patrolInterval);
+        root.removeChild(this.el);
+      }
+    ];    
+
+    // Spawn enemies
+    let enemies = [];
+    for(let i=0; i<5; i++) {
+      enemies.push(new Enemy());
+    }
+
+    // Speed Boost Power-up
+    function activateSpeedBoost() {
+      powerUpActive = true;
+      speedMultiplier = 2;
+      powerupEl.textContent = "Speed Boost ⚡";
+      camera.setAttribute('wasd-controls', 'acceleration', 20 * speedMultiplier);
+      setTimeout(() => {
+        speedMultiplier = 1;
+        powerUpActive = false;
+        powerupEl.textContent = "None";
+        camera.setAttribute('wasd-controls', 'acceleration', 20);
+      }, 10000);
+    }
+
+    // Initialize camera speed to normal
+    camera.setAttribute('wasd-controls', 'acceleration', 20);
+
+    // Main game loop (to sync player movement speed multiplier)
+    AFRAME.registerComponent('player-movement-speed', {
+      tick: function () {
+        let wasd = this.el.components['wasd-controls'];
+        if (wasd) {
+          wasd.data.acceleration = 20 * speedMultiplier;
+        }
+      }
+    });
+    camera.setAttribute('player-movement-speed', '');
+
+  </script>
+</body>
+</html>
