@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Pro Bank</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #eef2f7;
+      margin: 0;
+      padding: 2rem;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+    }
+    .bank-container {
+      background: #fff;
+      padding: 2rem;
+      border-radius: 16px;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+      max-width: 420px;
+      width: 100%;
+    }
+    h1 { text-align: center; margin-bottom: 1.2rem; color: #333; }
+    .balance { font-size: 2rem; font-weight: bold; color: #2e7d32; text-align: center; margin-bottom: 1rem; }
+    .error { color: #d32f2f; text-align: center; font-size: 0.95rem; margin-bottom: 1rem; height: 1rem; }
+    input, select { width: 100%; padding: 0.75rem; margin-bottom: 1rem; border: 1px solid #ccc; border-radius: 6px; font-size: 1rem; }
+    .buttons { display: flex; justify-content: space-between; gap: 0.75rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+    button {
+      flex: 1;
+      padding: 0.75rem;
+      font-size: 1rem;
+      font-weight: 600;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    .deposit { background: #2196f3; color: white; }
+    .deposit:hover { background: #1976d2; }
+    .withdraw { background: #f44336; color: white; }
+    .withdraw:hover { background: #d32f2f; }
+    .reset { background: #9e9e9e; color: white; }
+    .reset:hover { background: #757575; }
+    .history { border-top: 1px solid #eee; padding-top: 1rem; font-size: 0.95rem; }
+    .history h3 { margin-bottom: 0.5rem; color: #333; }
+    .history ul { list-style: none; padding: 0; max-height: 150px; overflow-y: auto; }
+    .history li { padding: 6px 0; border-bottom: 1px solid #f0f0f0; }
+    .history li.deposit { color: #1976d2; }
+    .history li.withdraw { color: #d32f2f; }
+    canvas { margin-top: 2rem; max-width: 100%; }
+  </style>
+</head>
+<body>
+  <div class="bank-container">
+    <h1>Pro Bank</h1>
+    <select id="userSelect"></select>
+    <div class="balance">Balance: <span id="currencySymbol">$</span><span id="balance">0.00</span></div>
+    <div class="error" id="error"></div>
+    <input type="number" id="amount" placeholder="Enter amount" />
+    <input type="text" id="description" placeholder="Transaction description (optional)" />
+    <div class="buttons">
+      <button class="deposit" onclick="deposit()">Deposit</button>
+      <button class="withdraw" onclick="withdraw()">Withdraw</button>
+      <button class="reset" onclick="resetBalance()">Reset</button>
+    </div>
+    <div class="history">
+      <h3>Transaction History</h3>
+      <ul id="historyList"></ul>
+    </div>
+    <canvas id="balanceChart" height="150"></canvas>
+  </div>
+
+  <script>
+    const users = {
+      alice: 1000,
+      bob: 500,
+    };
+
+    const balances = { ...users };
+    let currentUser = 'alice';
+    let chart;
+    let chartData = [];
+
+    const balanceEl = document.getElementById('balance');
+    const currencyEl = document.getElementById('currencySymbol');
+    const amountInput = document.getElementById('amount');
+    const descInput = document.getElementById('description');
+    const errorEl = document.getElementById('error');
+    const historyList = document.getElementById('historyList');
+    const userSelect = document.getElementById('userSelect');
+
+    Object.keys(users).forEach(user => {
+      const option = document.createElement('option');
+      option.value = user;
+      option.textContent = user;
+      userSelect.appendChild(option);
+    });
+
+    userSelect.value = currentUser;
+    userSelect.addEventListener('change', () => {
+      currentUser = userSelect.value;
+      chartData = [];
+      updateDisplay();
+      historyList.innerHTML = '';
+      updateChart();
+    });
+
+    function updateDisplay() {
+      balanceEl.textContent = balances[currentUser].toFixed(2);
+      amountInput.value = '';
+      descInput.value = '';
+    }
+
+    function showError(msg) {
+      errorEl.textContent = msg;
+      setTimeout(() => (errorEl.textContent = ''), 2500);
+    }
+
+    function addToHistory(type, amount, desc) {
+      const li = document.createElement('li');
+      li.className = type;
+      const date = new Date().toLocaleDateString();
+      li.textContent = `${date} - ${desc || type}: ${type === 'deposit' ? '+' : '-'} $${amount.toFixed(2)}`;
+      historyList.prepend(li);
+    }
+
+    function updateChart() {
+      if (!chart) {
+        chart = new Chart(document.getElementById('balanceChart'), {
+          type: 'line',
+          data: {
+            labels: [],
+            datasets: [{
+              label: 'Balance Over Time',
+              data: [],
+              borderColor: '#2196f3',
+              fill: false,
+              tension: 0.2,
+            }],
+          },
+          options: { responsive: true, scales: { y: { beginAtZero: true } } },
+        });
+      }
+      chartData.push(balances[currentUser]);
+      chart.data.labels.push(new Date().toLocaleTimeString());
+      chart.data.datasets[0].data = chartData;
+      chart.update();
+    }
+
+    function deposit() {
+      const amount = parseFloat(amountInput.value);
+      if (!isNaN(amount) && amount > 0) {
+        balances[currentUser] += amount;
+        updateDisplay();
+        addToHistory('deposit', amount, descInput.value);
+        updateChart();
+      } else {
+        showError('Enter a valid deposit amount.');
+      }
+    }
+
+    function withdraw() {
+      const amount = parseFloat(amountInput.value);
+      if (!isNaN(amount) && amount > 0) {
+        if (amount <= balances[currentUser]) {
+          balances[currentUser] -= amount;
+          updateDisplay();
+          addToHistory('withdraw', amount, descInput.value);
+          updateChart();
+        } else {
+          showError('Insufficient funds.');
+        }
+      } else {
+        showError('Enter a valid withdrawal amount.');
+      }
+    }
+
+    function resetBalance() {
+      if (confirm('Reset the balance and history for this user?')) {
+        balances[currentUser] = 0;
+        historyList.innerHTML = '';
+        chartData = [];
+        updateDisplay();
+        updateChart();
+      }
+    }
+
+    updateDisplay();
+    updateChart();
+  </script>
+</body>
+</html>
